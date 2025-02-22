@@ -109,8 +109,8 @@ git_override(
 bazel_dep(name = "rules_qt")
 git_override(
     module_name = "rules_qt",
-    remote = "https://github.com/Vertexwahn/rules_qt6.git",
-    commit = "f43d76ab1d3b60bd494e871f4f1042a351bfcff8",
+    remote = "https://github.com/pkasila/rules_qt6.git",
+    commit = "79f71d7c663c45c729a42e81d5def0cca236d250",
 )
 
 qt = use_extension("@rules_qt//:extensions.bzl", "qt")
