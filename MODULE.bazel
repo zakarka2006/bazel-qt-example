@@ -1,0 +1,129 @@
+###############################################################################
+# Bazel now uses Bzlmod by default to manage external dependencies.
+# Please consider migrating your external dependencies from WORKSPACE to MODULE.bazel.
+#
+# For more details, please check https://github.com/bazelbuild/bazel/issues/18958
+###############################################################################
+bazel_dep(name = "rules_pkg", version = "1.0.1")
+###############################################################################
+# Bazel now uses Bzlmod by default to manage external dependencies.
+# Please consider migrating your external dependencies from WORKSPACE to MODULE.bazel.
+#
+# For more details, please check https://github.com/bazelbuild/bazel/issues/18958
+###############################################################################
+bazel_dep(name = "rules_python", version = "0.40.0")
+python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+python.toolchain(
+    ignore_root_user_error = True,
+    python_version = "3.11",
+)
+bazel_dep(name = "rules_go", version = "0.50.1")
+bazel_dep(name = "rules_cc", version = "0.0.10")
+bazel_dep(name = "platforms", version = "0.0.10")
+bazel_dep(name = "bazel_skylib", version = "1.7.1")
+bazel_dep(name = "rules_foreign_cc", version = "0.12.0")
+
+# tools = use_extension("@rules_foreign_cc//foreign_cc:extensions.bzl", "tools")
+# tools.cmake(version = "3.23.1")
+# tools.ninja(version = "1.11.1")
+# use_repo(
+#     tools,
+#     "meson_src",
+# )
+
+# bazel_dep(name = "rules_swift", version = "1.6.0", repo_name = "build_bazel_rules_swift")
+# bazel_dep(name = "rules_apple", version = "3.4.0", repo_name = "build_bazel_rules_apple")
+# bazel_dep(name = "apple_support", version = "1.12.0", repo_name = "build_bazel_apple_support")
+
+# python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+# python.toolchain(
+#     configure_coverage_tool = True,
+#     # Only set when you have mulitple toolchain versions.
+#     is_default = True,
+#     python_version = "3.12",
+# )
+
+# pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
+# pip.parse(
+#     hub_name = "pip",
+#     python_version = "3.12",
+#     requirements_lock = "//:requirements_lock.txt",
+# )
+# use_repo(pip, "pip")
+
+# python bindings
+# bazel_dep(name = "pybind11_bazel", version = "2.12.0")
+
+# cpp lib
+bazel_dep(name = "fmt", version = "11.0.2")
+bazel_dep(name = "spdlog", version = "1.14.1")
+bazel_dep(name = "magic_enum", version = "0.9.6")
+
+# Tests frameworks
+bazel_dep(name = "catch2", version = "3.7.1")
+bazel_dep(name = "googletest", version = "1.15.2")
+
+# benchmark
+bazel_dep(name = "google_benchmark", version = "1.8.5")
+
+# compile_comands.json generator
+# Hedron's Compile Commands Extractor for Bazel
+# https://github.com/hedronvision/bazel-compile-commands-extractor
+bazel_dep(name = "hedron_compile_commands", dev_dependency = True)
+git_override(
+    module_name = "hedron_compile_commands",
+    commit = "4f28899228fb3ad0126897876f147ca15026151e",
+    remote = "https://github.com/hedronvision/bazel-compile-commands-extractor.git",
+)
+
+# toolchains for compilets and libs
+# TODO(sokolik): add and using gcc
+
+# bazel_dep(name = "toolchains_llvm", version = "1.0.0")
+
+# bazel linter
+bazel_dep(name = "buildozer", version = "7.1.2")
+bazel_dep(name = "buildifier_prebuilt", version = "7.3.1")
+bazel_dep(name = "depend_on_what_you_use", version = "0.5.0")
+
+# raytracer
+bazel_dep(name = "libpng", version = "1.6.43")
+
+# linters
+
+bazel_dep(name = "bazel_clang_tidy", dev_dependency = True)
+git_override(
+    module_name = "bazel_clang_tidy",
+    commit = "c4c4b9ce5693b26ec6b8e7b0af3db59a3092d540",
+    remote = "https://github.com/erenon/bazel_clang_tidy.git",
+)
+
+# TODO(sokolik): uncomment when it make possible
+bazel_dep(name = "bazel_clang_format", dev_dependency = True)
+git_override(
+    module_name = "bazel_clang_format",
+    remote = "https://github.com/oliverlee/bazel_clang_format.git",
+    commit = "1fd2a042798ede8d6f5498ea92287bc1204260fa",
+)
+
+bazel_dep(name = "rules_qt")
+git_override(
+    module_name = "rules_qt",
+    remote = "https://github.com/Vertexwahn/rules_qt6.git",
+    commit = "f43d76ab1d3b60bd494e871f4f1042a351bfcff8",
+)
+
+qt = use_extension("@rules_qt//:extensions.bzl", "qt")
+qt.fetch()
+
+use_repo(
+    qt,
+    "qt_linux_x86_64",
+    "qt_mac_aarch64",
+    "qt_windows_x86_64",
+)
+
+register_toolchains(
+    "@rules_qt//tools:all",
+    dev_dependency = True,
+)

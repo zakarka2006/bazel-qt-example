@@ -1,0 +1,62 @@
+stages:
+  - build
+  - test
+  - deploy
+
+build:
+  stage: build
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  tags:
+    - docker
+  image: registry.gitlab.pkasila.net/public-repos/qt-base-image
+  script:
+    - mv WORKSPACE-ci.bzl WORKSPACE
+    - bazel build //app:app
+
+clang-tidy:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  tags:
+    - docker
+  image: registry.gitlab.pkasila.net/public-repos/qt-base-image
+  script:
+    - mv WORKSPACE-ci.bzl WORKSPACE
+    - bazel build --config=clang-tidy //...
+
+clang-format:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  tags:
+    - docker
+  image: registry.gitlab.pkasila.net/public-repos/qt-base-image
+  script:
+    - mv WORKSPACE-ci.bzl WORKSPACE
+    - bazel build --config=clang-format //...
+
+deploy:
+  stage: deploy
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+  needs:
+    - build
+    - clang-tidy
+    - clang-format
+  tags:
+    - docker
+  image: registry.gitlab.pkasila.net/public-repos/qt-base-image
+  script:
+    - mv WORKSPACE-ci.bzl WORKSPACE
+    - bazel build //app:release
+    - mkdir -p build
+    - cp -L bazel-bin/app/release.tar build/outfitmanager.tar
+    - gzip -c build/outfitmanager.tar > build/outfitmanager.tar.gz
+  artifacts:
+    paths:
+      - build/outfitmanager.tar.gz
