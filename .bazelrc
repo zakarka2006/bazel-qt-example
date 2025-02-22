@@ -200,5 +200,5 @@ build:vs2022 --host_copt=-DNOGDI
 
 # macOS (e.g. Clang 12.0.0)
 build:macos --cxxopt='-std=c++2a'
-build --cxxopt='-mmacosx-version-min=10.15'
+build:macos --cxxopt='-mmacosx-version-min=10.15'
 build:macos --cxxopt=-Wall
