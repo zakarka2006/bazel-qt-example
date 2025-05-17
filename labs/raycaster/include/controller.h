@@ -5,8 +5,21 @@
 #include <vector>
 #include <QPointF>
 #include <unordered_map>
+#include <functional>
+#include "lightsource.h"
 #include "polygon.h"
 #include "ray.h"
+
+namespace std {
+    template <>
+    struct hash<QPointF> {
+        std::size_t operator()(const QPointF& p) const noexcept {
+            std::size_t h1 = std::hash<double>{}(p.x());
+            std::size_t h2 = std::hash<double>{}(p.y());
+            return h1 ^ (h2 << 1);
+        }
+    };
+}
 
 class Controller : public QObject {
     Q_OBJECT
@@ -65,6 +78,7 @@ private:
 
     void updateVertexCache();
     bool doesEdgeIntersectPolygons(const QPointF& p1, const QPointF& p2) const;
+    std::vector<double> calculateAngles(const QPointF& source, const QPointF& vertex) const;
 
     Mode m_mode;
     std::vector<Polygon> m_polygons;
@@ -72,6 +86,7 @@ private:
     std::unordered_map<QPointF, VertexData> m_vertexCache;
     bool m_cacheValid;
     bool dynamicLightCollisions;
+
 
     static constexpr double ANGLE_OFFSET = 0.0001;
     static constexpr double ADJACENT_THRESHOLD = 0.01;
